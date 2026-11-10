@@ -1,0 +1,44 @@
+.globe {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.canvas {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 600ms ease;
+  contain: layout paint size;
+}
+
+.canvas[data-ready='true'] {
+  opacity: 1;
+}
+
+/* Etiqueta presa ao marcador via CSS Anchor Positioning (cobe expõe as âncoras). */
+.label {
+  display: none;
+}
+
+@supports (position-anchor: --a) {
+  .label {
+    display: block;
+    position: absolute;
+    position-anchor: var(--anchor);
+    bottom: anchor(top);
+    left: anchor(center);
+    translate: -50% -10px;
+    padding: 2px 6px;
+    border: 1px solid var(--accent);
+    border-radius: 2px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: var(--visible);
+    transition: opacity 200ms;
+  }
+}

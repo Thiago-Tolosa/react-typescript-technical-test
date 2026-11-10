@@ -1,0 +1,30 @@
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item + .item {
+  border-top: 1px solid var(--line);
+}
+
+.item {
+  animation: rise 260ms var(--ease-out) backwards;
+}
+
+/* Entrada escalonada curta: dá ritmo sem atrasar a leitura. */
+.item:nth-child(2) { animation-delay: 20ms; }
+.item:nth-child(3) { animation-delay: 40ms; }
+.item:nth-child(4) { animation-delay: 60ms; }
+.item:nth-child(5) { animation-delay: 80ms; }
+.item:nth-child(6) { animation-delay: 100ms; }
+.item:nth-child(7) { animation-delay: 120ms; }
+.item:nth-child(8) { animation-delay: 140ms; }
+.item:nth-child(n + 9) { animation-delay: 160ms; }
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}

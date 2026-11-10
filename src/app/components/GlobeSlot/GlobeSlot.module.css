@@ -1,0 +1,7 @@
+.placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px dashed var(--line-strong);
+  border-radius: 50%;
+  scale: 0.8;
+}

@@ -1,0 +1,36 @@
+.root {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+  padding: 40px 24px;
+  border-left: 2px solid var(--line-strong);
+}
+
+.root[data-tone='danger'] {
+  border-left-color: var(--danger);
+}
+
+.code {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+.root[data-tone='danger'] .code {
+  color: var(--danger);
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.description {
+  max-width: 46ch;
+  color: var(--text-muted);
+}
+
+.action {
+  margin-top: 12px;
+}

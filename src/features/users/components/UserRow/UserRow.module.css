@@ -1,0 +1,134 @@
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 28px 36px minmax(0, 1fr) minmax(0, 220px) 16px;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 20px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  transition: background-color 120ms;
+}
+
+/* Marcador lateral que aparece no hover/foco. */
+.row::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 160ms var(--ease-out);
+}
+
+.row:hover,
+.row:focus-visible {
+  background: var(--surface-2);
+}
+
+.row:hover::before,
+.row:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.row:focus-visible {
+  outline: none;
+}
+
+.position {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  transition: color 120ms;
+}
+
+.row:hover .position,
+.row:focus-visible .position {
+  color: var(--accent);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.identity,
+.meta {
+  display: grid;
+  min-width: 0;
+}
+
+.name,
+.email,
+.city,
+.company {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.name {
+  font-weight: 500;
+}
+
+.email {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.city {
+  font-size: 14px;
+}
+
+.company {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.arrow {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--text-faint);
+  stroke-width: 1.4;
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition: opacity 140ms, transform 160ms var(--ease-out), stroke 120ms;
+}
+
+.row:hover .arrow,
+.row:focus-visible .arrow {
+  opacity: 1;
+  transform: none;
+  stroke: var(--accent);
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 36px minmax(0, 1fr) 16px;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .position,
+  .meta {
+    display: none;
+  }
+
+  .arrow {
+    opacity: 1;
+    transform: none;
+  }
+}

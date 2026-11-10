@@ -1,0 +1,57 @@
+.panel {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.viewport {
+  padding: 16px;
+  background:
+    radial-gradient(circle at center, var(--surface-2) 0%, transparent 65%),
+    var(--bg);
+}
+
+.readout {
+  display: grid;
+  gap: 2px;
+  min-height: 64px;
+  align-content: center;
+  padding: 12px 16px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.readoutName {
+  font-weight: 500;
+}
+
+.readoutMeta {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.faint {
+  color: var(--text-faint);
+}
+
+.note {
+  padding: 10px 16px;
+  border-top: 1px solid var(--line);
+  color: var(--text-faint);
+  font-size: 12px;
+}

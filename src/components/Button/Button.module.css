@@ -1,0 +1,32 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  transition: background-color 120ms, border-color 120ms, color 120ms;
+}
+
+.outline {
+  border: 1px solid var(--line-strong);
+  background: transparent;
+}
+
+.outline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.ghost {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.ghost:hover {
+  background: var(--surface-3);
+  color: var(--text);
+}

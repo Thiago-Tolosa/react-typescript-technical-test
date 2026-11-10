@@ -1,0 +1,30 @@
+:root {
+  /* Superfícies: cada camada sobe um degrau de luminosidade. */
+  --bg: #0b0b0c;
+  --surface-1: #111113;
+  --surface-2: #17171a;
+  --surface-3: #1f1f23;
+
+  --line: #232327;
+  --line-strong: #323238;
+
+  /* Texto levemente quente para não “brilhar” sobre o preto. */
+  --text: #e9e7e3;
+  --text-muted: #8e8c88;
+  --text-faint: #5a5956;
+
+  /* Única cor de destaque do sistema. */
+  --accent: #ff6a2b;
+  --accent-dim: #ff6a2b33;
+  --accent-ink: #160a04;
+
+  --danger: #ff5c5c;
+
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --radius: 3px;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  color-scheme: dark;
+}
