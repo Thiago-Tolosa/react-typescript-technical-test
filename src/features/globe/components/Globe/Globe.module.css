@@ -16,6 +16,12 @@
   opacity: 1;
 }
 
+/* Arrastar no toque gira o globo em vez de rolar a página. */
+.canvas[data-interactive='true'] {
+  cursor: grab;
+  touch-action: none;
+}
+
 /* Etiqueta presa ao marcador via CSS Anchor Positioning (cobe expõe as âncoras). */
 .label {
   display: none;

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import type { User } from '../../types/user'
 import { getInitials } from '../../utils/getInitials'
 import styles from './UserRow.module.css'
@@ -8,13 +9,34 @@ interface UserRowProps {
   onSelect: (user: User) => void
   /** Avisa quando o registro ganha (id) ou perde (null) destaque. */
   onHighlight?: (userId: number | null) => void
+  /** Destaque vindo de fora da lista (ex.: hover no globo). */
+  isHighlighted?: boolean
+  /** Rola até a linha quando ela é destacada de fora. */
+  revealWhenHighlighted?: boolean
 }
 
-export function UserRow({ user, position, onSelect, onHighlight }: UserRowProps) {
+export function UserRow({
+  user,
+  position,
+  onSelect,
+  onHighlight,
+  isHighlighted = false,
+  revealWhenHighlighted = false,
+}: UserRowProps) {
+  const rowRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (isHighlighted && revealWhenHighlighted) {
+      rowRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    }
+  }, [isHighlighted, revealWhenHighlighted])
+
   return (
     <button
+      ref={rowRef}
       type="button"
       className={styles.row}
+      data-highlighted={isHighlighted || undefined}
       onClick={() => onSelect(user)}
       onMouseEnter={() => onHighlight?.(user.id)}
       onMouseLeave={() => onHighlight?.(null)}

@@ -4,6 +4,10 @@ Aplicação React que lista os usuários da API pública [JSONPlaceholder](https
 
 Feito como desafio técnico para vaga de Desenvolvedor Front-End Júnior (React + Vite + TypeScript).
 
+### 🔗 [Ver online](https://react-typescript-technical-test-mu.vercel.app/)
+
+Publicado na Vercel, com deploy automático a cada push na `main`.
+
 <!-- Para adicionar uma imagem: salve um print em docs/preview.png e descomente a linha abaixo -->
 <!-- ![Tela principal: lista de usuários à esquerda e globo à direita](docs/preview.png) -->
 
@@ -59,6 +63,9 @@ O app abre em `http://localhost:5173`.
 - **Modal de detalhes** com nome completo, email, telefone, empresa, cidade, endereço, website e um mini-globo focado no usuário
 - **Globo 3D** com todos os usuários:
   - ao passar o mouse (ou focar com <kbd>Tab</kbd>) num registro, o globo gira até ele e mostra a cidade
+  - ao passar o mouse num ponto do globo, a linha do usuário é destacada na lista (e rolada até ficar visível)
+  - clicar num ponto abre o modal do usuário, igual a clicar na lista
+  - arrastar gira o globo; com o cursor sobre ele, a rotação automática pausa para os pontos não fugirem
   - quando a busca deixa um único resultado, o globo centraliza nele
 - **Estados de carregamento** (skeleton com o mesmo formato das linhas), **erro** (com botão "Tentar novamente") e **busca sem resultados**
 - **Atalhos:** <kbd>/</kbd> foca a busca, <kbd>Esc</kbd> limpa a busca ou fecha o modal
@@ -90,7 +97,7 @@ O app abre em `http://localhost:5173`.
 | ------------------------------------- | :----: | --------------------------------------------------------- |
 | CSS Modules / Tailwind / Styled       |   ✅   | CSS Modules + design tokens em variáveis CSS              |
 | Melhorias de UI/UX                    |   ✅   | globo, busca tolerante, atalhos, skeleton, acessibilidade |
-| Testes (Jest / React Testing Library) |   ✅   | Vitest + React Testing Library, 25 testes                 |
+| Testes (Jest / React Testing Library) |   ✅   | Vitest + React Testing Library, 35 testes                 |
 
 > O Vitest foi usado no lugar do Jest por ser o padrão do ecossistema Vite: ele usa a mesma configuração do projeto e tem API compatível com a do Jest (`describe`, `it`, `expect`).
 
@@ -146,8 +153,13 @@ src/
 │   │   └── index.ts            # API pública da feature
 │   │
 │   └── globe/                  # Globo genérico: não conhece "usuário", só pontos
-│       ├── hooks/useCobeGlobe.ts   # Parte imperativa (WebGL + animação)
-│       ├── utils/rotation.ts       # Matemática de rotação (+ testes)
+│       ├── hooks/
+│       │   ├── useCobeGlobe.ts     # Parte imperativa (WebGL + animação)
+│       │   └── useGlobePointer.ts  # Hover, clique e arraste nos pontos
+│       ├── utils/
+│       │   ├── rotation.ts         # Ângulos para centralizar um ponto (+ testes)
+│       │   └── projection.ts       # lat/lng → posição na tela; ponto sob o cursor (+ testes)
+│       ├── config.ts               # Raio, elevação e área de clique compartilhados
 │       ├── components/Globe/
 │       └── index.ts
 │
@@ -176,6 +188,9 @@ src/
 - **`getJson` trata status HTTP.** O `fetch` nativo só rejeita em falha de rede; um 404 ou 500 passaria como sucesso sem esse cuidado.
 - **`UserDetails` recebe o globo por um slot (`aside`).** Assim a feature de usuários não depende da feature do globo.
 - **O globo é criado uma única vez.** Mudanças de foco e marcadores chegam por `globe.update()`, sem recriar o contexto WebGL a cada render.
+- **Clique nos pontos sem depender da lib.** O cobe desenha num canvas e não diz qual ponto foi clicado. `projection.ts` reproduz a projeção dele para saber onde cada ponto está na tela, e o clique pega o ponto visível mais próximo do cursor. A área de clique (14px) é maior que o ponto (~6px), e pontos atrás do globo são ignorados.
+- **O destaque guarda a origem (`list` ou `globe`).** Vindo da lista, o globo gira até o ponto. Vindo do globo, a lista rola até a linha, mas o globo não gira, senão o ponto fugiria do cursor.
+- **Clique e arraste são diferenciados por distância.** Se o ponteiro andar menos de 4px entre apertar e soltar, é clique; mais que isso, é arraste e não abre o modal.
 - **O globo é carregado sob demanda** (`React.lazy`) e fica num arquivo separado do bundle principal. A lista aparece antes, sem esperar o WebGL.
 - **O modal usa `<dialog>` nativo**, que já traz foco preso, Esc e camada superior sem código extra.
 - **[cobe](https://github.com/shuding/cobe) no lugar de three.js:** ~5 kB contra centenas, e faz exatamente o necessário (pontos num globo).
@@ -189,14 +204,16 @@ src/
 npm test
 ```
 
-São 25 testes, divididos assim:
+São 35 testes, divididos assim:
 
 - **Fluxo completo do app** (`App.test.tsx`):
   - carregamento, lista, busca e estado vazio
   - abrir e fechar o modal com os campos exigidos
   - erro com retry
+- **Lista** (`UserList.test.tsx`): destaque vindo do globo, rolagem até a linha, hover e clique.
 - **Busca** (`searchByText.test.ts`, `searchUsersByName.test.ts`): tokenização, Levenshtein, tolerância a erros e ordenação por relevância.
-- **Utilitários:** iniciais, formatação de coordenadas, rotação do globo.
+- **Globo** (`projection.test.ts`, `rotation.test.ts`): ponto centralizado na tela, pontos atrás do globo, direção do arraste e ponto sob o cursor.
+- **Utilitários:** iniciais e formatação de coordenadas.
 
 O `fetch` é simulado com `vi.spyOn`, e o globo (WebGL) é substituído por um componente vazio, já que o jsdom não tem WebGL.
 

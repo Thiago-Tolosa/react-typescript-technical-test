@@ -1,5 +1,6 @@
 import createGlobe, { type Globe, type Marker } from 'cobe'
 import { useEffect, useRef, type RefObject } from 'react'
+import { MARKER_ELEVATION } from '../config'
 import { shortestAngleDelta, type Rotation } from '../utils/rotation'
 
 interface UseCobeGlobeOptions {
@@ -11,6 +12,11 @@ interface UseCobeGlobeOptions {
   autoRotate: boolean
 }
 
+export interface GlobeControl {
+  /** Enquanto true (cursor sobre o globo), nada gira sozinho: o usuário está no controle. */
+  userControlled: boolean
+}
+
 const RESTING_THETA = 0.25
 const EASING = 0.08
 const SPIN_SPEED = 0.0025
@@ -19,6 +25,8 @@ const SPIN_SPEED = 0.0025
  * Encapsula a parte imperativa (WebGL + requestAnimationFrame) do cobe.
  * O globo é criado uma única vez; mudanças de props chegam via refs/`update`,
  * sem recriar o contexto WebGL a cada render.
+ *
+ * Devolve a rotação atual (mutável) para quem precisa ler ou arrastar o globo.
  */
 export function useCobeGlobe(
   canvasRef: RefObject<HTMLCanvasElement | null>,
@@ -26,6 +34,7 @@ export function useCobeGlobe(
 ) {
   const globeRef = useRef<Globe | null>(null)
   const rotationRef = useRef<Rotation>({ phi: 0, theta: RESTING_THETA })
+  const controlRef = useRef<GlobeControl>({ userControlled: false })
   const motionRef = useRef({ target, autoRotate })
   const markersRef = useRef(markers)
 
@@ -61,7 +70,7 @@ export function useCobeGlobe(
       baseColor: [0.22, 0.22, 0.24],
       markerColor: [0.62, 0.61, 0.59],
       glowColor: [0.07, 0.07, 0.08],
-      markerElevation: 0.01,
+      markerElevation: MARKER_ELEVATION,
       markers: markersRef.current,
     })
     globeRef.current = globe
@@ -71,7 +80,9 @@ export function useCobeGlobe(
       const rotation = rotationRef.current
       const { target, autoRotate } = motionRef.current
 
-      if (target) {
+      if (controlRef.current.userControlled) {
+        // A rotação só muda pelo arraste (feito por quem controla).
+      } else if (target) {
         rotation.phi += shortestAngleDelta(rotation.phi, target.phi) * EASING
         rotation.theta += (target.theta - rotation.theta) * EASING
       } else {
@@ -95,4 +106,6 @@ export function useCobeGlobe(
   useEffect(() => {
     if (size > 0) globeRef.current?.update({ width: size, height: size })
   }, [size])
+
+  return { rotationRef, controlRef }
 }

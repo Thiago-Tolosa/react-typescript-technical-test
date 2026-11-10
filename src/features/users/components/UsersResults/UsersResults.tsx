@@ -1,22 +1,18 @@
 import { Button } from '../../../../components/Button'
 import { StatusMessage } from '../../../../components/StatusMessage'
 import type { UsersState } from '../../hooks/useUsers'
-import type { User } from '../../types/user'
-import { UserList } from '../UserList'
+import { UserList, type UserListProps } from '../UserList'
 import { UserListSkeleton } from '../UserListSkeleton'
 
-interface UsersResultsProps {
+interface UsersResultsProps extends UserListProps {
   state: UsersState
-  /** Usuários já filtrados pela busca. */
-  users: User[]
+  /** `users` herdado de UserListProps: já filtrados pela busca. */
   query: string
   onRetry: () => void
-  onSelect: (user: User) => void
-  onHighlight?: (userId: number | null) => void
 }
 
 /** Decide o que mostrar para cada estado da requisição. */
-export function UsersResults({ state, users, query, onRetry, onSelect, onHighlight }: UsersResultsProps) {
+export function UsersResults({ state, query, onRetry, ...listProps }: UsersResultsProps) {
   if (state.status === 'loading') {
     return <UserListSkeleton />
   }
@@ -33,7 +29,7 @@ export function UsersResults({ state, users, query, onRetry, onSelect, onHighlig
     )
   }
 
-  if (users.length === 0) {
+  if (listProps.users.length === 0) {
     return (
       <StatusMessage
         code="0 RESULTADOS"
@@ -43,5 +39,5 @@ export function UsersResults({ state, users, query, onRetry, onSelect, onHighlig
     )
   }
 
-  return <UserList users={users} onSelect={onSelect} onHighlight={onHighlight} />
+  return <UserList {...listProps} />
 }

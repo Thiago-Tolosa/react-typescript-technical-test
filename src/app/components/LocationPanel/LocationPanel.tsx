@@ -6,12 +6,28 @@ import styles from './LocationPanel.module.css'
 
 interface LocationPanelProps {
   users: User[]
-  focusedUser: User | null
+  /** Usuário destacado (pela lista ou pelo globo). */
+  highlightedUser: User | null
+  /** Usuário até o qual o globo deve girar. */
+  focusedId: number | null
+  onPointHover: (userId: number | null) => void
+  onSelect: (user: User) => void
 }
 
-/** Painel lateral: globo com todos os usuários visíveis + leitura do usuário em foco. */
-export function LocationPanel({ users, focusedUser }: LocationPanelProps) {
+/** Painel lateral: globo com os usuários visíveis + leitura do usuário em destaque. */
+export function LocationPanel({
+  users,
+  highlightedUser,
+  focusedId,
+  onPointHover,
+  onSelect,
+}: LocationPanelProps) {
   const points = useMemo(() => usersToGlobePoints(users), [users])
+
+  function handlePointSelect(userId: number) {
+    const user = users.find((candidate) => candidate.id === userId)
+    if (user) onSelect(user)
+  }
 
   return (
     <aside className={styles.panel} aria-label="Localização dos usuários">
@@ -23,21 +39,26 @@ export function LocationPanel({ users, focusedUser }: LocationPanelProps) {
       <div className={styles.viewport}>
         <GlobeSlot
           points={points}
-          focusedId={focusedUser?.id ?? null}
-          focusedLabel={focusedUser?.address.city}
+          focusedId={focusedId}
+          highlightedId={highlightedUser?.id ?? null}
+          highlightedLabel={highlightedUser?.address.city}
+          onPointHover={onPointHover}
+          onPointSelect={handlePointSelect}
         />
       </div>
 
       <footer className={styles.readout} aria-live="polite">
-        {focusedUser ? (
+        {highlightedUser ? (
           <>
-            <span className={styles.readoutName}>{focusedUser.name}</span>
+            <span className={styles.readoutName}>{highlightedUser.name}</span>
             <span className={styles.readoutMeta}>
-              {focusedUser.address.city} · {formatCoordinates(focusedUser.address.geo)}
+              {highlightedUser.address.city} · {formatCoordinates(highlightedUser.address.geo)}
             </span>
           </>
         ) : (
-          <span className={styles.faint}>Passe o mouse sobre um registro para localizá-lo.</span>
+          <span className={styles.faint}>
+            Passe o mouse sobre um registro ou ponto. Clique para ver detalhes, arraste para girar.
+          </span>
         )}
       </footer>
 

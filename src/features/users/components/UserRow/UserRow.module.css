@@ -24,11 +24,13 @@
 }
 
 .row:hover,
+.row[data-highlighted],
 .row:focus-visible {
   background: var(--surface-2);
 }
 
 .row:hover::before,
+.row[data-highlighted]::before,
 .row:focus-visible::before {
   transform: scaleY(1);
 }
@@ -45,6 +47,7 @@
 }
 
 .row:hover .position,
+.row[data-highlighted] .position,
 .row:focus-visible .position {
   color: var(--accent);
 }
@@ -109,6 +112,7 @@
 }
 
 .row:hover .arrow,
+.row[data-highlighted] .arrow,
 .row:focus-visible .arrow {
   opacity: 1;
   transform: none;
