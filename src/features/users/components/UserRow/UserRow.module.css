@@ -12,7 +12,7 @@
   transition: background-color 120ms;
 }
 
-/* Marcador lateral que aparece no hover/foco. */
+/* Marcador lateral que aparece no hover/destaque. */
 .row::before {
   content: '';
   position: absolute;
@@ -24,19 +24,22 @@
 }
 
 .row:hover,
-.row[data-highlighted],
-.row:focus-visible {
+.row[data-highlighted] {
   background: var(--surface-2);
 }
 
 .row:hover::before,
-.row[data-highlighted]::before,
-.row:focus-visible::before {
+.row[data-highlighted]::before {
   transform: scaleY(1);
 }
 
+/*
+ * Foco de teclado tem visual próprio (anel), diferente do hover.
+ * Assim, quando o modal devolve o foco a esta linha, ela não parece "presa" em hover.
+ */
 .row:focus-visible {
-  outline: none;
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
 }
 
 .position {

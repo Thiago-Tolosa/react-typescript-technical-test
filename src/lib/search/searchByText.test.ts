@@ -35,4 +35,24 @@ describe('matchCost', () => {
   it('retorna null quando alguma palavra não corresponde', () => {
     expect(matchCost('dennis xyz', 'Mrs. Dennis Schulist')).toBeNull()
   })
+
+  // Mesma tabela documentada no README ("Quantos erros são tolerados").
+  describe('limite de erros pelo tamanho do termo', () => {
+    it('1 a 3 letras: nenhum erro', () => {
+      expect(matchCost('jse', 'José')).toBeNull()
+    })
+
+    it('4 a 7 letras: 1 erro, mas não 2', () => {
+      expect(matchCost('denis', 'Dennis')).not.toBeNull()
+      expect(matchCost('dinnes', 'Dennis')).toBeNull()
+    })
+
+    it('8 ou mais letras: 2 erros', () => {
+      expect(matchCost('clemetnine', 'Clementine Bauch')).not.toBeNull()
+    })
+
+    it('aceita o erro com a palavra ainda incompleta', () => {
+      expect(matchCost('schulst', 'Mrs. Dennis Schulist')).not.toBeNull()
+    })
+  })
 })

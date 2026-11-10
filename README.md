@@ -97,7 +97,7 @@ O app abre em `http://localhost:5173`.
 | ------------------------------------- | :----: | --------------------------------------------------------- |
 | CSS Modules / Tailwind / Styled       |   ✅   | CSS Modules + design tokens em variáveis CSS              |
 | Melhorias de UI/UX                    |   ✅   | globo, busca tolerante, atalhos, skeleton, acessibilidade |
-| Testes (Jest / React Testing Library) |   ✅   | Vitest + React Testing Library, 35 testes                 |
+| Testes (Jest / React Testing Library) |   ✅   | Vitest + React Testing Library, 41 testes                 |
 
 > O Vitest foi usado no lugar do Jest por ser o padrão do ecossistema Vite: ele usa a mesma configuração do projeto e tem API compatível com a do Jest (`describe`, `it`, `expect`).
 
@@ -125,7 +125,19 @@ Implementada do zero em [`src/lib/search`](src/lib/search), sem biblioteca exter
    - erro de digitação: `denis` → `dennis` (custo 2, medido pela [distância de Levenshtein](https://pt.wikipedia.org/wiki/Dist%C3%A2ncia_Levenshtein))
 3. Os resultados são ordenados pelo custo total; empates mantêm a ordem original.
 
-Termos com menos de 4 letras não aceitam erro de digitação, para evitar resultados aleatórios. Termos com 8 letras ou mais aceitam até 2 erros.
+**Quantos erros são tolerados**
+
+O limite cresce com o tamanho de cada palavra digitada:
+
+| Tamanho do termo | Erros aceitos | Exemplo                        |
+| ---------------- | :-----------: | ------------------------------ |
+| 1 a 3 letras     |       0       | `jse` não encontra `jose`      |
+| 4 a 7 letras     |       1       | `denis` → `dennis`             |
+| 8 ou mais letras |       2       | `clemetnine` → `clementine`    |
+
+Em palavras curtas, um único erro muda boa parte da palavra: aceitar `ana` com 1 erro traria `ava`, `ama`, `anna`… Em palavras longas, 1 erro é pouco, porque é mais fácil errar duas letras digitando rápido. Os limites ficam em `allowedTypos`, em [`searchByText.ts`](src/lib/search/searchByText.ts).
+
+Cada "erro" é uma letra inserida, removida ou trocada. O termo é comparado com o **início** da palavra em três tamanhos (o tamanho do termo, uma letra a menos e uma a mais). Assim o erro é aceito mesmo com a palavra ainda incompleta: `schulst` casa com `schulist` porque, comparado com as 8 primeiras letras, falta só o "i".
 
 ---
 
@@ -204,7 +216,7 @@ src/
 npm test
 ```
 
-São 35 testes, divididos assim:
+São 41 testes, divididos assim:
 
 - **Fluxo completo do app** (`App.test.tsx`):
   - carregamento, lista, busca e estado vazio

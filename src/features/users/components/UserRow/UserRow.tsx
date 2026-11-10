@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { isFocusVisible } from '../../../../lib/dom/isFocusVisible'
 import type { User } from '../../types/user'
 import { getInitials } from '../../utils/getInitials'
 import styles from './UserRow.module.css'
@@ -24,6 +25,8 @@ export function UserRow({
   revealWhenHighlighted = false,
 }: UserRowProps) {
   const rowRef = useRef<HTMLButtonElement>(null)
+  /** Se o destaque atual veio do foco, para o blur só limpar o que ele mesmo criou. */
+  const highlightedByFocusRef = useRef(false)
 
   useEffect(() => {
     if (isHighlighted && revealWhenHighlighted) {
@@ -40,8 +43,18 @@ export function UserRow({
       onClick={() => onSelect(user)}
       onMouseEnter={() => onHighlight?.(user.id)}
       onMouseLeave={() => onHighlight?.(null)}
-      onFocus={() => onHighlight?.(user.id)}
-      onBlur={() => onHighlight?.(null)}
+      onFocus={(event) => {
+        // Só foco de teclado destaca. Ao fechar o modal com o mouse, o <dialog>
+        // devolve o foco a esta linha; sem esse filtro, o destaque ficaria preso.
+        if (!isFocusVisible(event.currentTarget)) return
+        highlightedByFocusRef.current = true
+        onHighlight?.(user.id)
+      }}
+      onBlur={() => {
+        if (!highlightedByFocusRef.current) return
+        highlightedByFocusRef.current = false
+        onHighlight?.(null)
+      }}
     >
       <span className={styles.position} aria-hidden="true">
         {String(position).padStart(2, '0')}
